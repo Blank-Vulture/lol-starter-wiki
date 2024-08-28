@@ -9,6 +9,11 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      pages: write
+      workflows: write  # workflowsの書き込み権限を追加
 
     steps:
       - name: Checkout the repository
@@ -46,5 +51,5 @@ jobs:
           git add .github/workflows/gh-pages.yml
           git commit -m "Update GitHub Actions to latest versions"
           git push
-          env:
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
