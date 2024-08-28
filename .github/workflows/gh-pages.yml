@@ -17,7 +17,8 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: 'lts/*'  # 最新のLTSバージョンを使用
+          cache: 'npm'  # npmキャッシュを利用してビルド速度を向上
 
       - name: Install dependencies
         run: npm install
