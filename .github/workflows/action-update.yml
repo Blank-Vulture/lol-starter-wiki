@@ -10,10 +10,8 @@ jobs:
   update:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write  # ワークフローの編集に必要な権限
       id-token: write
-      pages: write
-      workflows: write  # workflowsの書き込み権限を追加
 
     steps:
       - name: Checkout the repository
