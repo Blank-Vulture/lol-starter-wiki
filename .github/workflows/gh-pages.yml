@@ -12,10 +12,10 @@ jobs:
 
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v2
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4.0.3
+        uses: actions/setup-node@v2
         with:
           node-version: 'lts/*'  # 最新のLTSバージョンを使用
 
@@ -26,7 +26,7 @@ jobs:
         run: npm run build
 
       - name: Upload artifact to GitHub Pages
-        uses: actions/upload-pages-artifact@v3.0.1  # 最新のバージョンを自動使用
+        uses: actions/upload-pages-artifact@v2  # 最新のバージョンを自動使用
         with:
           path: build  # ビルドされたコンテンツをアップロード
 
