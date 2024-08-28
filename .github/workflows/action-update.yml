@@ -1,0 +1,49 @@
+# .github/workflows/update-actions.yml
+name: Update GitHub Actions Versions
+
+on:
+  schedule:
+    - cron: '0 0 1 * *'  # 毎月1日の0時に実行
+  workflow_dispatch:  # 手動での実行も可能
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+
+      - name: Fetch latest versions
+        id: fetch_latest
+        run: |
+          CHECKOUT_VERSION=$(curl -s https://api.github.com/repos/actions/checkout/releases/latest | jq -r '.tag_name')
+          SETUP_NODE_VERSION=$(curl -s https://api.github.com/repos/actions/setup-node/releases/latest | jq -r '.tag_name')
+          UPLOAD_ARTIFACT_VERSION=$(curl -s https://api.github.com/repos/actions/upload-pages-artifact/releases/latest | jq -r '.tag_name')
+          DEPLOY_PAGES_VERSION=$(curl -s https://api.github.com/repos/actions/deploy-pages/releases/latest | jq -r '.tag_name')
+          echo "checkout_version=${CHECKOUT_VERSION}" >> $GITHUB_ENV
+          echo "setup_node_version=${SETUP_NODE_VERSION}" >> $GITHUB_ENV
+          echo "upload_artifact_version=${UPLOAD_ARTIFACT_VERSION}" >> $GITHUB_ENV
+          echo "deploy_pages_version=${DEPLOY_PAGES_VERSION}" >> $GITHUB_ENV
+
+      - name: Update gh-pages.yml with latest versions
+        run: |
+          sed -i "s/actions\/checkout@v[0-9]*/actions\/checkout@${{ env.checkout_version }}/g" .github/workflows/gh-pages.yml
+          sed -i "s/actions\/setup-node@v[0-9]*/actions\/setup-node@${{ env.setup_node_version }}/g" .github/workflows/gh-pages.yml
+          sed -i "s/actions\/upload-pages-artifact@v[0-9]*/actions\/upload-pages-artifact@${{ env.upload_artifact_version }}/g" .github/workflows/gh-pages.yml
+          sed -i "s/actions\/deploy-pages@v[0-9]*/actions\/deploy-pages@${{ env.deploy_pages_version }}/g" .github/workflows/gh-pages.yml
+
+      - name: Commit and push updates
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/gh-pages.yml
+          git commit -m "Update GitHub Actions to latest versions"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
