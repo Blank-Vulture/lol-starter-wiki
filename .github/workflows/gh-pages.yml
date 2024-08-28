@@ -1,4 +1,4 @@
-# .github/workflows/gh-pages.yml
+# gh-pages-template.yml
 name: Deploy to GitHub Pages
 
 on:
@@ -12,10 +12,10 @@ jobs:
 
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'  # 最新のLTSバージョンを使用
 
@@ -26,7 +26,7 @@ jobs:
         run: npm run build
 
       - name: Upload artifact to GitHub Pages
-        uses: actions/upload-pages-artifact@v2  # 最新のバージョンを自動使用
+        uses: actions/upload-pages-artifact@v3  # 最新のバージョンを自動使用
         with:
           path: build  # ビルドされたコンテンツをアップロード
 
@@ -42,4 +42,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2  # 最新のバージョンを自動使用
+        uses: actions/deploy-pages@v4  # 最新のバージョンを自動使用
