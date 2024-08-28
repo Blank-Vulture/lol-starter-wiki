@@ -7,18 +7,17 @@ on:
       - main  # mainブランチにプッシュされたときに実行
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@latest
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@latest
         with:
           node-version: 'lts/*'  # 最新のLTSバージョンを使用
-          cache: 'npm'  # npmキャッシュを利用してビルド速度を向上
 
       - name: Install dependencies
         run: npm install
@@ -26,8 +25,21 @@ jobs:
       - name: Build the website
         run: npm run build
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Upload artifact to GitHub Pages
+        uses: actions/upload-pages-artifact@latest  # 最新のバージョンを自動使用
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build
+          path: build  # ビルドされたコンテンツをアップロード
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write  # GitHub Pagesへの書き込み権限を付与
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@latest  # 最新のバージョンを自動使用
